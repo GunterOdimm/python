@@ -21,14 +21,16 @@ dirname = "%s_%s" %('뉴스기사', datetime)
 if not os.path.exists(dirname):
     os.mkdir(dirname)
 
-link_list = crawler.select(URL, encoding ="euc-kr", selector = ".newsnow_tx_inner > a, .newsnow_imgarea > a, .mtype_img > dt > a, .mlist2 > li > a")
+link_list = crawler.select(URL, encoding ="euc-kr", selector = ".mtype_img > dt > a, .mlist2 > li > a")
+print(type(link_list))
+# for item in link_list:
+    # print(item)
+    # print("-" * 30)
 
 for item in link_list:
+    # print(type(item.attrs))
     print(item)
-    print("-" * 30)
 
-for item in link_list:
-    print(type(item.attrs))
     if "href" in item.attrs:
         if "read.nhn" in item['href']:
             url_list.append(item['href'])
@@ -48,7 +50,7 @@ for i, url in enumerate(url_list):
 
     title_str = ""
     content_str = ""
-
+    print(news_html_item)
     title = news_html_item.select("#articleTitle")
 
     if title:
@@ -57,36 +59,36 @@ for i, url in enumerate(url_list):
         title_str = title_str.replace("'","").replace("\"","").replace("?","").replace(""","").replace(""","").replace("/","").replace(">","").replace("<","")
         print(title_str)
 
-    content = news_html_item.select("#articleBodyContents")
+    # content = news_html_item.select("#articleBodyContents")
 
-    if content:
-        news_text = content[0]
+    # if content:
+    #     news_text = content[0]
 
-        crawler.remove(news_text,'script')
-        crawler.remove(news_text, 'a')
-        crawler.remove(news_text,'br')
-        crawler.remove(news_text,'span',{'class': 'end_photo_org'})
+    #     crawler.remove(news_text,'script')
+    #     crawler.remove(news_text, 'a')
+    #     crawler.remove(news_text,'br')
+    #     crawler.remove(news_text,'span',{'class': 'end_photo_org'})
 
-        content_str = news_text.text.strip()
-        news_content += content_str
+    #     content_str = news_text.text.strip()
+    #     news_content += content_str
 
-    if title_str and content_str:
-        fname = dirname + "/" +title_str + ".txt"
-        with open(fname, 'w',encoding='utf-8')as f:
-            f.write(content_str)
+    # if title_str and content_str:
+    #     fname = dirname + "/" +title_str + ".txt"
+    #     with open(fname, 'w',encoding='utf-8')as f:
+    #         f.write(content_str)
 
-nlp = Okt()
-nouns = nlp.nouns(news_content)
-count = Counter(nouns)
-most - count.most_common(100)
+# nlp = Okt()
+# nouns = nlp.nouns(news_content)
+# count = Counter(nouns)
+# most = count.most_common(100)
 
-tags = {}
-for n, c in most:
-    if len(n) > 1:
-        tags[n] =c
+# tags = {}
+# for n, c in most:
+#     if len(n) > 1:
+#         tags[n] =c
 
-wc = WordCloud(font_path = "NanumGothic", max_font_size=200, width=1200, height=800, background_color= #ffffff)
+# wc = WordCloud(font_path ="NanumGothic", max_font_size=200, width=1200, height=800, background_color= '#ffffff')
 
-wc.generate_from_frequencies(tags)
+# wc.generate_from_frequencies(tags)
 
-wc.to_file("news_%s.png" % datetime)
+# wc.to_file("news_%s.png" % datetime)

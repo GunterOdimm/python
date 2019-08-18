@@ -45,6 +45,22 @@ class Crawler:
 
         return soup.select(selector)
 
+    def url_select(self, url, selector='html', encoding='utf-8'):
+        # 웹 페이지 접속 함수를 호출하여 소스코드 리턴받기
+        source = self.get(url, encoding)
+
+        # 리턴값이 없다면 처리 중단
+        if not source:
+            return None
+
+        # 웹 페이지의 소스코드 HTML 분석 객체로 생성
+        soup = BeautifulSoup(source, 'html.parser')
+
+        # CSS 선택자를 활용하여 가져오기를 원하는 부분 지정
+        # -> list로 리턴
+        return soup.select(selector)
+
+
     def remove(self, item, tag, selector=None):
         for target in item.find_all(tag, selector):
             target.extract()
@@ -66,3 +82,19 @@ class Crawler:
             f.write(img)
 
         return filename
+    def __init__(self, header={}, referer=None):
+        # 접속에 필요한 정보 구성
+        ses_info = {'referer': referer, 'User-agent': self.user_agent}
+
+        # 추가적인 header 정보가 전달되면 ses_info에 병합한다.
+        if header:
+            keys = list(header.keys())
+            for k in keys:
+                ses_info[k] = header[k]
+
+        # 세션객체 생성
+        self.session = requests.Session()
+
+        # 세션에 접속 정보 설정
+        self.session.headers.update(ses_info)
+
